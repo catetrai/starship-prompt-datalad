@@ -1,0 +1,22 @@
+[custom.dataset]
+description = """
+The hierarchy level of a DataLad dataset (~0 for superdataset, ~1 for first-level subdataset, etc.)
+"""
+command = """
+path="$PWD"
+ds_level=-1
+
+while [[ "$path" != / ]]; do
+    if [[ -f "$path"/.datalad/config ]]; then
+        ((ds_level++))
+    fi
+    path="$(realpath -s "$path"/..)"
+done
+
+if [[ "$ds_level" -gt -1 ]]; then
+    echo "DS~$ds_level"
+fi
+"""
+when = 'git rev-parse --is-inside-work-tree'
+shell = ["bash", "--noprofile", "--norc"]
+style = "bold 202"
